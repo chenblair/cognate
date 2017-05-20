@@ -1,0 +1,24 @@
+<script type="text/javascript">
+    var api_key = 'trnsl.1.1.20170520T182148Z.048535fe1d474198.7ff844cf8520237fccf255d699f81778ce0a1715';
+
+    var lang1 = 'en';
+    var lang2 = 'fr';
+    translateFull('Je pense que [mangoes] est très [tasty]');
+
+    function translate(lang, text) {
+        return httpGet("https://translate.yandex.net/api/v1.5/tr.json/translate?lang=" + lang + "&key=" + api_key + "&text=" + text);
+    }
+
+    function httpGet(theUrl) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", theUrl, false); // false for synchronous request
+        xmlHttp.send(null);
+        return JSON.parse(xmlHttp.responseText).text;
+    }
+
+    function translateFull(text) {
+        var transtext = translate(lang2, translate(lang1, text));
+        alert(transtext);
+        return transtext;
+    }
+</script>
