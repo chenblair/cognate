@@ -3,10 +3,12 @@
 
     var lang1 = 'en';
     var lang2 = 'fr';
-    translateFull('Je pense que [mangoes] est très [tasty]');
+
+    alert(parser(translateFull(parseStr('Je pense que {mangoes} est très {tasty}'))));
+
 
     function translate(lang, text) {
-        return httpGet("https://translate.yandex.net/api/v1.5/tr.json/translate?lang=" + lang + "&key=" + api_key + "&text=" + text);
+        return httpGet("https://translate.yandex.net/api/v1.5/tr.json/translate?lang=" + lang + "&key=" + api_key + "&text=" + encodeURI(text));
     }
 
     function httpGet(theUrl) {
@@ -18,7 +20,65 @@
 
     function translateFull(text) {
         var transtext = translate(lang2, translate(lang1, text));
-        alert(transtext);
+        // alert(transtext);
         return transtext;
     }
+    function parseStr(str) {
+    var regex = /\{([^\}]+)\}/g;
+    var matches;
+    matches = str.match(regex);
+    var resp = "";
+
+    if (matches === null) {
+        //TODO: do something
+        return;
+    }
+
+    preMatched = matches;
+
+    var toTranslate = str;
+    toTranslate = toTranslate.replace(/[{}]/gi, '');
+    for (var i = 0; i < matches.length; i++) {
+        var trans = matches[i].substring(1, matches[i].length - 1) + ": " + "[TRANSLATION]\n";
+        resp += trans;
+
+        toTranslate += " " + matches[i] + ".";
+    }
+
+    //translate(context, event, lang2, toTranslate);
+    //var url = 'https://translate.yandex.net/api/v1.5/tr.json/translate?lang=' + lang2 + '&key=' + api_key + '&text=' + encodeURI(toTranslate) + '/';
+    //context.simplehttp.makeGet(url);
+
+    /*var url = 'https://translate.yandex.net/api/v1.5/tr.json/translate';
+    var param = 'lang=' + lang2 + '&key=' + api_key + '&text=' + encodeURI(toTranslate);
+    context.simplehttp.makePost(url,param,null,parser);*/
+
+    return toTranslate;
+
+    //context.sendResponse(toTranslate);
+}
+function translateFull(text) {
+        var transtext = translate(lang2, translate(lang1, text));
+        //alert(transtext);
+        return transtext;
+    }
+function parser(transtext) {
+  //alert (transtext);
+    transtext= transtext.toString();
+    var regex = /\{([^\}]+)\}/g;
+    var matches = transtext.match(regex);
+    var resp = "";
+
+    for (var i = 0; i < matches.length; i++) {
+        var trans = preMatched[i] + ": " + matches[i].substring(1, matches[i].length - 1) + "\n";
+        resp += trans;
+        var link = "http://www.linguee.com/english-french/search?source=auto&query=" + "\n";
+        resp += link;
+
+    }
+    var index = transtext.indexOf('{');
+    resp += "\n" + transtext.substring(0, index - 1);
+
+    return resp;
+}
 </script>
